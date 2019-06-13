@@ -13,7 +13,7 @@ public class CreateUserTest extends FunctionalTests {
 
     @Test
     public void postFormWithMalformedRequestDataReturnsBadRequest() {
-        JSONObject jsonObj = new JSONObject().put("email", "tracy@domain.com");
+        JSONObject jsonObj = new JSONObject().put("e-mail", "tracy@domain.com");
         RestAssured.given()
                    .accept(ContentType.JSON)
                    .header("Content-Type", "application/json;charset=UTF-8")
@@ -21,7 +21,7 @@ public class CreateUserTest extends FunctionalTests {
                    .expect()
                    .log()
                    .all()
-                   .statusCode(HttpStatus.SC_CREATED)
+                   .statusCode(HttpStatus.SC_BAD_REQUEST)
                    .when()
                    .post(USER_API);
     }
