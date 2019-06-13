@@ -4,6 +4,7 @@ import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
@@ -63,10 +63,18 @@ public class LikePostRepositoryTest {
     }
 
     @Test
+    public void likedPostList_doesntContainRemovedLike() {
+        repository.save(like);
+        repository.delete(like);
+        List<LikePost> likes = repository.findAll();
+        assertThat(likes, hasSize(0));
+        assertThat(likes, not(contains(like)));
+    }
+
+    @Test
     public void shouldFindLikeByUserAndPost() {
         repository.save(like);
         LikePost foundLike = repository.findByUserAndPost(user, post).orElse(null);
         assertThat(foundLike, is(like));
     }
-
 }
