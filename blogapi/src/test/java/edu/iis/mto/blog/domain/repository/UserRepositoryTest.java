@@ -59,43 +59,43 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
-  @Test
-  public void shouldFindUserByFirstName() {
-    User persistedUser = entityManager.persist(user);
-    String firstName = persistedUser.getFirstName().toLowerCase();
-    String lastName = "abc";
-    String email = "abc";
-    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
-    Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
-  }
+    @Test
+    public void shouldFindUserByFirstName() {
+        User persistedUser = entityManager.persist(user);
+        String firstName = persistedUser.getFirstName().toLowerCase();
+        String lastName = "abc";
+        String email = "abc";
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+        Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
+    }
 
-  @Test
-  public void shouldFindUserByLastName() {
-    User persistedUser = entityManager.persist(user);
-    String firstName = "abc";
-    String lastName = persistedUser.getLastName().toUpperCase();
-    String email = "abc";
-    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
-    Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
-  }
+    @Test
+    public void shouldFindUserByLastName() {
+        User persistedUser = entityManager.persist(user);
+        String firstName = "abc";
+        String lastName = persistedUser.getLastName().toUpperCase();
+        String email = "abc";
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+        Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
+    }
 
-  @Test
-  public void shouldFindUserByEmail() {
-    User persistedUser = entityManager.persist(user);
-    String firstName = "abc";
-    String lastName = "abc";
-    String email = persistedUser.getEmail().split("@")[0];
-    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
-    Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
-  }
+    @Test
+    public void shouldFindUserByEmail() {
+        User persistedUser = entityManager.persist(user);
+        String firstName = "abc";
+        String lastName = "abc";
+        String email = persistedUser.getEmail().split("@")[0];
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+        Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
+    }
 
-  @Test
-  public void shouldNotFindUserByWrongData() {
-    User persistedUser = entityManager.persist(user);
-    String firstName = "abc";
-    String lastName = "abc";
-    String email = persistedUser.getEmail().split("@")[0] + "@mail.com";
-    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
-    Assert.assertThat(foundUsers, Matchers.not(Matchers.contains(persistedUser)));
-  }
+    @Test
+    public void shouldNotFindUserByWrongData() {
+        User persistedUser = entityManager.persist(user);
+        String firstName = "abc";
+        String lastName = "abc";
+        String email = persistedUser.getEmail().split("@")[0] + "@mail.com";
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+        Assert.assertThat(foundUsers, Matchers.not(Matchers.contains(persistedUser)));
+    }
 }
