@@ -21,8 +21,6 @@ import edu.iis.mto.blog.services.DataFinder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-import javax.servlet.http.HttpServletResponse;
-
 @RestController
 @RequestMapping(path = "/blog", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(tags = "blog api")
@@ -102,7 +100,7 @@ public class BlogApi {
 
     @ExceptionHandler(DomainError.class)
     public @ResponseBody ResponseEntity handleException(DomainError e) {
-        if (e.getMessage().equals(DomainError.UNCONFIRMED_CANNOT_POST)) {
+        if (e.getMessage().equals(DomainError.UNCONFIRMED_USER) || e.getMessage().equals(DomainError.SELF_LIKE)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
         }
 
