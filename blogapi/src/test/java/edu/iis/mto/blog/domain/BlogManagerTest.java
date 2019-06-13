@@ -50,11 +50,17 @@ public class BlogManagerTest {
     @Autowired
     BlogService blogService;
 
+    private User confirmedUser;
     private User unconfirmedUser;
     private BlogPost post;
 
     @Before
     public void setUp() {
+        confirmedUser = new User();
+        confirmedUser.setId(0L);
+        confirmedUser.setAccountStatus(AccountStatus.CONFIRMED);
+        confirmedUser.setEmail("");
+
         unconfirmedUser = new User();
         unconfirmedUser.setId(1L);
         unconfirmedUser.setAccountStatus(AccountStatus.CONFIRMED);
@@ -66,7 +72,7 @@ public class BlogManagerTest {
         post.setEntry("");
     }
 
-  @Test
+    @Test
     public void creatingNewUserShouldSetAccountStatusToNEW() {
         blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
         ArgumentCaptor<User> userParam = ArgumentCaptor.forClass(User.class);
@@ -83,4 +89,16 @@ public class BlogManagerTest {
       blogService.addLikeToPost(unconfirmedUser.getId(), post.getId());
     }
 
+    @Test
+    public void addLikeToPost_shouldSucceed_whenUserIsConfirmed() {
+        Mockito.when(userRepository.findById(confirmedUser.getId())).thenReturn(Optional.of(confirmedUser));
+        Mockito.when(userRepository.findById(unconfirmedUser.getId())).thenReturn(Optional.of(unconfirmedUser));
+        Mockito.when(postRepository.findById(post.getId())).thenReturn(Optional.of(post));
+
+        blogService.addLikeToPost(confirmedUser.getId(), post.getId());
+        ArgumentCaptor<LikePost> likeParam = ArgumentCaptor.forClass(LikePost.class);
+        Mockito.verify(likeRepository).save(likeParam.capture());
+        LikePost like = likeParam.getValue();
+        assertThat(like, notNullValue());
+    }
 }
