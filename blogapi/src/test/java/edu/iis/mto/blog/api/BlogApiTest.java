@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.api;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -10,6 +11,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -50,6 +52,21 @@ public class BlogApiTest {
         mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isCreated())
                 .andExpect(content().string(writeJson(new Id(newUserId))));
+    }
+
+    @Test
+    public void dataIntegrityViolationShouldResultIn409Response() throws Exception {
+      UserRequest user = new UserRequest();
+      user.setEmail("john@smith.com");
+      String content = writeJson(user);
+
+      Mockito.when(blogService.createUser(user)).thenThrow(DataIntegrityViolationException.class);
+
+      mvc.perform(post("/blog/user")
+              .contentType(MediaType.APPLICATION_JSON_UTF8)
+              .accept(MediaType.APPLICATION_JSON_UTF8)
+              .content(content))
+         .andExpect(status().isConflict());
     }
 
     @Test
