@@ -88,4 +88,14 @@ public class UserRepositoryTest {
     List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
     Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
   }
+
+  @Test
+  public void shouldNotFindUserByWrongData() {
+    User persistedUser = entityManager.persist(user);
+    String firstName = "abc";
+    String lastName = "abc";
+    String email = persistedUser.getEmail().split("@")[0] + "@mail.com";
+    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+    Assert.assertThat(foundUsers, Matchers.not(Matchers.contains(persistedUser)));
+  }
 }
