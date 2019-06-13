@@ -41,4 +41,19 @@ public class CreateUserTest extends FunctionalTests {
                    .post(USER_API);
     }
 
+    @Test
+    public void postFormWithFreeEmailReturnsOk() {
+        JSONObject jsonObj = new JSONObject().put("email", "kevin@domain.com");
+        RestAssured.given()
+                   .accept(ContentType.JSON)
+                   .header("Content-Type", "application/json;charset=UTF-8")
+                   .body(jsonObj.toString())
+                   .expect()
+                   .log()
+                   .all()
+                   .statusCode(HttpStatus.SC_CREATED)
+                   .when()
+                   .post(USER_API);
+    }
+
 }
