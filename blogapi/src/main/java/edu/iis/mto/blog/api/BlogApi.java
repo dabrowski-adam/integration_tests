@@ -2,6 +2,7 @@ package edu.iis.mto.blog.api;
 
 import java.util.List;
 
+import edu.iis.mto.blog.domain.errors.DomainError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,11 +94,20 @@ public class BlogApi {
         return finder.getPost(postId);
     }
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-  public @ResponseBody ResponseEntity handleException(IllegalArgumentException e) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-  }
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public @ResponseBody ResponseEntity handleException(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
+
+    @ExceptionHandler(DomainError.class)
+    public @ResponseBody ResponseEntity handleException(DomainError e) {
+        if (e.getMessage().equals(DomainError.UNCONFIRMED_CANNOT_POST)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
 
     private Id id(Long id) {
         return new Id(id);
