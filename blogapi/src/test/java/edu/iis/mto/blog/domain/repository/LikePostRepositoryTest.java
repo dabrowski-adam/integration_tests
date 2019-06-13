@@ -4,7 +4,6 @@ import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,6 +68,30 @@ public class LikePostRepositoryTest {
         List<LikePost> likes = repository.findAll();
         assertThat(likes, hasSize(0));
         assertThat(likes, not(contains(like)));
+    }
+
+    @Test
+    public void likedPostList_containsModifiedLike() {
+        repository.save(like);
+
+        User anotherUser = new User();
+        anotherUser.setAccountStatus(AccountStatus.NEW);
+        anotherUser.setEmail("");
+        entityManager.persist(anotherUser);
+
+        BlogPost anotherPost = new BlogPost();
+        anotherPost.setUser(anotherUser);
+        anotherPost.setEntry("");
+        entityManager.persist(anotherPost);
+
+        like.setUser(anotherUser);
+        like.setPost(anotherPost);
+        repository.save(like);
+
+        List<LikePost> likes = repository.findAll();
+        assertThat(likes, hasSize(1));
+        assertThat(like, hasProperty("user", is(anotherUser)));
+        assertThat(like, hasProperty("post", is(anotherPost)));
     }
 
     @Test
