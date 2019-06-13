@@ -31,6 +31,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -63,6 +64,16 @@ public class UserRepositoryTest {
     User persistedUser = entityManager.persist(user);
     String firstName = persistedUser.getFirstName().toLowerCase();
     String lastName = "abc";
+    String email = "abc";
+    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+    Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
+  }
+
+  @Test
+  public void shouldFindUserByLastName() {
+    User persistedUser = entityManager.persist(user);
+    String firstName = "abc";
+    String lastName = persistedUser.getLastName().toUpperCase();
     String email = "abc";
     List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
     Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
