@@ -5,7 +5,6 @@ import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,4 +58,13 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+  @Test
+  public void shouldFindUserByFirstName() {
+    User persistedUser = entityManager.persist(user);
+    String firstName = persistedUser.getFirstName().toLowerCase();
+    String lastName = "abc";
+    String email = "abc";
+    List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, lastName, email);
+    Assert.assertThat(foundUsers, Matchers.contains(persistedUser));
+  }
 }
