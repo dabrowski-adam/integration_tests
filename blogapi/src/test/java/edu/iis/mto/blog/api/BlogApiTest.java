@@ -22,6 +22,8 @@ import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
 
+import javax.persistence.EntityNotFoundException;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
 public class BlogApiTest {
@@ -48,6 +50,12 @@ public class BlogApiTest {
         mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isCreated())
                 .andExpect(content().string(writeJson(new Id(newUserId))));
+    }
+
+    @Test
+    public void getUserShouldReturn404WhenUserDoesNotExist() throws Exception {
+        Mockito.when(finder.getUserData(0L)).thenThrow(EntityNotFoundException.class);
+        mvc.perform(post("/blog/user/id/{id}", 0)).andExpect(status().isNotFound());
     }
 
     private String writeJson(Object obj) throws JsonProcessingException {
