@@ -29,7 +29,9 @@ public class LikePostRepositoryTest {
     private LikePostRepository repository;
 
     private User user;
+    private User anotherUser;
     private BlogPost post;
+    private BlogPost anotherPost;
     private LikePost like;
 
     @Before
@@ -39,14 +41,22 @@ public class LikePostRepositoryTest {
         user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
-
         entityManager.persist(user);
+
+        anotherUser = new User();
+        anotherUser.setAccountStatus(AccountStatus.NEW);
+        anotherUser.setEmail("");
+        entityManager.persist(anotherUser);
 
         post = new BlogPost();
         post.setUser(user);
         post.setEntry("Lorem ipsum");
-
         entityManager.persist(post);
+
+        anotherPost = new BlogPost();
+        anotherPost.setUser(anotherUser);
+        anotherPost.setEntry("");
+        entityManager.persist(anotherPost);
 
         like = new LikePost();
         like.setUser(user);
@@ -74,16 +84,6 @@ public class LikePostRepositoryTest {
     public void likedPostList_containsModifiedLike() {
         repository.save(like);
 
-        User anotherUser = new User();
-        anotherUser.setAccountStatus(AccountStatus.NEW);
-        anotherUser.setEmail("");
-        entityManager.persist(anotherUser);
-
-        BlogPost anotherPost = new BlogPost();
-        anotherPost.setUser(anotherUser);
-        anotherPost.setEntry("");
-        entityManager.persist(anotherPost);
-
         like.setUser(anotherUser);
         like.setPost(anotherPost);
         repository.save(like);
@@ -99,5 +99,19 @@ public class LikePostRepositoryTest {
         repository.save(like);
         LikePost foundLike = repository.findByUserAndPost(user, post).orElse(null);
         assertThat(foundLike, is(like));
+    }
+
+    @Test
+    public void shouldNotFindLikeByWrongUser() {
+        repository.save(like);
+        LikePost foundLike = repository.findByUserAndPost(anotherUser, post).orElse(null);
+        assertThat(foundLike, nullValue());
+    }
+
+    @Test
+    public void shouldNotFindLikeByWrongPost() {
+        repository.save(like);
+        LikePost foundLike = repository.findByUserAndPost(user, anotherPost).orElse(null);
+        assertThat(foundLike, nullValue());
     }
 }
