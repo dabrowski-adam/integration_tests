@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -59,6 +60,13 @@ public class LikePostRepositoryTest {
         List<LikePost> likes = repository.findAll();
         assertThat(likes, hasSize(1));
         assertThat(likes, contains(like));
+    }
+
+    @Test
+    public void shouldFindLikeByUserAndPost() {
+        repository.save(like);
+        LikePost foundLike = repository.findByUserAndPost(user, post).orElse(null);
+        assertThat(foundLike, is(like));
     }
 
 }
